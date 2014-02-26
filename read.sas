@@ -64,6 +64,11 @@ proc import datafile="&dirURI.age.txt" dbms=tab out=&LN..tmp_AGE replace;
 		guessingrows=500;  * как много строк нужно просканировать, для определения максемальной длинны поля;
 run; 
 
+/*proc import datafile="&dirURI.owner.txt" dbms=tab out=&LN..tmp_OWNER replace; */
+/*		getnames=yes; * получать имена переменных?;*/
+/*		guessingrows=500;  * как много строк нужно просканировать, для определения максемальной длинны поля;*/
+/*run; */
+
 *загоняем в транспортный файл;
 proc cport library=&LN file=tranfile;
 run;
