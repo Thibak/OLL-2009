@@ -31,6 +31,10 @@
 /*run;*/
 %what_OC;
 
+<<<<<<< HEAD
+
+=======
+>>>>>>> origin/master
 %let dirURI = &disk.:\AC\OLL-2009\cur_base\; * директория с базой;
 %let metaFN = meta.txt; * имя файла метаданных;
 %let LN = ALL2009; * имя библиотеки;
@@ -84,6 +88,11 @@ proc import datafile="&dirURI.age.txt" dbms=tab out=&LN..tmp_AGE replace;
 		getnames=yes; * получать имена переменных?;
 		guessingrows=500;  * как много строк нужно просканировать, для определения максемальной длинны поля;
 run; 
+
+/*proc import datafile="&dirURI.owner.txt" dbms=tab out=&LN..tmp_OWNER replace; */
+/*		getnames=yes; * получать имена переменных?;*/
+/*		guessingrows=500;  * как много строк нужно просканировать, для определения максемальной длинны поля;*/
+/*run; */
 
 *загоняем в транспортный файл;
 proc cport library=&LN file=tranfile;
