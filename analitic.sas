@@ -698,6 +698,10 @@ proc print data = &LN..new_pt;
 	var pt_id name new_normkariotipname;
 run; 
 
+proc freq data = &LN..new_pt;
+	table new_normkariotipname;
+run;
+
 %eventan (&LN..new_pt, TLive, i_death, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Выживаемость");
 %eventan (&LN..new_pt, TRF, iRF, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Безрецидивная выживаемость");
 %eventan (&LN..new_pt, Trel, i_rel, 0,F,&y,new_normkariotipname,,"Стратификация по кариотипу Вероятность развития рецидива"); *вероятность развития рецидива;
