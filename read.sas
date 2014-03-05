@@ -21,25 +21,7 @@
 	%end;
 %mend;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 51ae1faf16863e5f2217a79c941b7e268e6f6ccf
-=======
->>>>>>> 51ae1faf16863e5f2217a79c941b7e268e6f6ccf
-=======
->>>>>>> 51ae1faf16863e5f2217a79c941b7e268e6f6ccf
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
+
 
 /*определитель ОС*/
 /*data comp;*/
@@ -50,36 +32,7 @@
 /*run;*/
 %what_OC;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
 
-/*определитель ОС*/
-/*data comp;*/
-/*	OC = "&sysscpl";*/
-/*run;*/
-/**/
-/*proc print data = COMP;*/
-/*run;*/
-%what_OC;
-
->>>>>>> e72f358aa33a053278a07cd08a31f9444bfff5bd
-=======
->>>>>>> 51ae1faf16863e5f2217a79c941b7e268e6f6ccf
-=======
->>>>>>> 51ae1faf16863e5f2217a79c941b7e268e6f6ccf
-=======
->>>>>>> 51ae1faf16863e5f2217a79c941b7e268e6f6ccf
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
-=======
->>>>>>> origin/master
 %let dirURI = &disk.:\AC\OLL-2009\cur_base\; * директория с базой;
 %let metaFN = meta.txt; * имя файла метаданных;
 %let LN = ALL2009; * имя библиотеки;
