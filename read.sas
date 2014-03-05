@@ -31,10 +31,6 @@
 /*run;*/
 %what_OC;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/master
 %let dirURI = &disk.:\AC\OLL-2009\cur_base\; * директория с базой;
 %let metaFN = meta.txt; * имя файла метаданных;
 %let LN = ALL2009; * имя библиотеки;
