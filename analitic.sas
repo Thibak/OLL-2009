@@ -97,7 +97,10 @@ proc format;
 	value y_n 0 = "нет" 1 = "да";
 	value au_al_f 1 = "ауто" 2 = "алло - родственная" ;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	value reg_f 0 = "Регионы" 1 = "ГНЦ"; 
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
 run;
@@ -265,7 +268,12 @@ data &LN..new_pt /*(keep=)*/;
     if last.pguid then
         do;
 <<<<<<< HEAD
+<<<<<<< HEAD
 
+=======
+*            if it1 = 1 and it2 = 1 then; *этапы мне безразличны;
+output &LN..new_pt;
+>>>>>>> origin/master
 =======
 *            if it1 = 1 and it2 = 1 then; *этапы мне безразличны;
 output &LN..new_pt;
@@ -461,6 +469,9 @@ run;
 /*Смерть в индукции*/
 /*отобрать индук*/
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> origin/master
 
 =======
 >>>>>>> origin/master
@@ -752,6 +763,10 @@ proc freq data = &LN..new_pt;
 	table new_normkariotipname;
 run;
 
+proc freq data = &LN..new_pt;
+	table new_normkariotipname;
+run;
+
 %eventan (&LN..new_pt, TLive, i_death, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Выживаемость");
 %eventan (&LN..new_pt, TRF, iRF, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Безрецидивная выживаемость");
 %eventan (&LN..new_pt, Trel, i_rel, 0,F,&y,new_normkariotipname,,"Стратификация по кариотипу Вероятность развития рецидива"); *вероятность развития рецидива;
@@ -850,6 +865,7 @@ run;
 /*data adult;*/
 
 
+<<<<<<< HEAD
 
 /*регион москва 21C015D6-BF19-E211-B588-10000001B347 or Москва г*/
 
@@ -868,6 +884,8 @@ run;
 %eventan (tmp, Trel, i_rel, 0,F,&y,reg,reg_f.,"ГНЦ vs регионы. Вероятность развития рецидива"); *вероятность развития рецидива;
 
 
+=======
+>>>>>>> origin/master
 
 /*-----------------------------------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
