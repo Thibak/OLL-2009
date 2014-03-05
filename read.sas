@@ -15,7 +15,7 @@
 	%do;
 		%let disk = D; *sony;
 	%end;
-%else/*%if &sysscpl = "W32_7PRO" %then */ 
+%if &sysscpl = X64_7PRO %then 
 	%do;
 		%let disk = Z; *остальные;
 	%end;
