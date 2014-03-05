@@ -96,7 +96,10 @@ proc format;
 	value new_group_risk_f 1 = "стандартная" 2 = "высокая";
 	value y_n 0 = "нет" 1 = "да";
 	value au_al_f 1 = "ауто" 2 = "алло - родственная" ;
+<<<<<<< HEAD
 	value reg_f 0 = "Регионы" 1 = "ГНЦ"; 
+=======
+>>>>>>> origin/master
 run;
 
 /*------------ препроцессинг восстановления реляций и целостности данных ---------------*/
@@ -261,7 +264,12 @@ data &LN..new_pt /*(keep=)*/;
 /*---------------------------------------------------*/
     if last.pguid then
         do;
+<<<<<<< HEAD
 
+=======
+*            if it1 = 1 and it2 = 1 then; *этапы мне безразличны;
+output &LN..new_pt;
+>>>>>>> origin/master
 			if time_error ne . then output &LN..error_timeline;
 
             output &LN..new_pt;
@@ -452,7 +460,10 @@ run;
 
 /*Смерть в индукции*/
 /*отобрать индук*/
+<<<<<<< HEAD
 
+=======
+>>>>>>> origin/master
 
 /*------ все проверки проведены, делаем вывод записей содержащих ошибки ------------*/
 
@@ -737,6 +748,10 @@ proc freq data = &LN..new_pt;
 	table new_normkariotipname;
 run;
 
+proc freq data = &LN..new_pt;
+	table new_normkariotipname;
+run;
+
 %eventan (&LN..new_pt, TLive, i_death, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Выживаемость");
 %eventan (&LN..new_pt, TRF, iRF, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Безрецидивная выживаемость");
 %eventan (&LN..new_pt, Trel, i_rel, 0,F,&y,new_normkariotipname,,"Стратификация по кариотипу Вероятность развития рецидива"); *вероятность развития рецидива;
@@ -825,6 +840,14 @@ run;
 
 *%eventan (&LN..new_pt, TLive, i_death, 0,F,&y,age,age_group_f.,"Стратификация по возрасту");
 *%eventan (&LN..new_pt, TRF, iRF, 0,F,&y,age,age_group_f.,"Стратификация по возрасту");
+
+
+/*data AYA;*/
+/*	set &LN..new_pt;*/
+/*	if age < 30 then output;*/
+/*run;*/
+
+/*data adult;*/
 
 
 
