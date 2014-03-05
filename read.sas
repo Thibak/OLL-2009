@@ -22,7 +22,6 @@
 %mend;
 
 
-
 /*определитель ОС*/
 /*data comp;*/
 /*	OC = "&sysscpl";*/
@@ -31,6 +30,7 @@
 /*proc print data = COMP;*/
 /*run;*/
 %what_OC;
+
 
 
 %let dirURI = &disk.:\AC\OLL-2009\cur_base\; * директория с базой;
