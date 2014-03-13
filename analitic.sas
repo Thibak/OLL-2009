@@ -788,7 +788,7 @@ run;
 %eventan (&LN..tmp, Trel, i_rel, 0,F,&y,new_normkariotipname,,"В-клеточный ОЛЛ. Стратификация по кариотипу. Вероятность развития рецидива"); *вероятность развития рецидива;
 
 /*Т-клеточный ОЛЛ*/
-data  &LN..tmp;
+data  &LN..tmp; 
     set &LN..new_pt;
     if (oll_class = 2) then output; *T-клеточный ОЛЛ.;
 run;
