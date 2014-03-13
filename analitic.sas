@@ -239,14 +239,18 @@ data &LN..new_et;
     it2 = i2;
 run;
 
-
+*убираем цензурированные записи;
+data &LN..new_et;
+	set &LN..new_et;
+	if it1 ne 0;
+run;
 
 /*прочесываем созданную таблицу, для каждой последней записи загоняем смену на дексаметазон, и номер этапа. Последнюю выводим в датасет*/
 data &LN..new_pt /*(keep=)*/;
     set &LN..new_et;
     by pguid;
-    retain ec   d_ch faza time_error induct_b induct_e; *ec -- это количество этапов "свернутых";
-    if first.pguid then do;  ec = 0; d_ch = 0; faza = .; time_error = .; induct_b = .; induct_e = .;  end;
+    retain ec   d_ch faza time_error; *ec -- это количество этапов "свернутых";
+    if first.pguid then do;  ec = 0; d_ch = 0; faza = .; time_error = .;   end;
 /*--------------------------------------------------*/
     if it2 then ec + 1;
 	if lastdate = . then time_error = 0;
@@ -270,8 +274,6 @@ data &LN..new_pt /*(keep=)*/;
             d_ch = 0;
             faza = .;
 			time_error = .;
-			induct_b = .; 
-			induct_e = .;
         end;
 	label d_ch = "Смена на дексаметазон";
 run;
@@ -387,7 +389,11 @@ data &LN..new_pt;
 		end;
 run;
 
-
+*убираем цензурированные записи;
+data &LN..new_pt;
+	set &LN..new_pt;
+	if ie1 ne 0;
+run;
 	
 
 /*поставить заплатку если время рецидива равно нулю то сегодняшняя дата <----------- ЕСТЬ ЛИ ЭТО????*/
