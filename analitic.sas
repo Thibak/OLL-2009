@@ -601,6 +601,11 @@ proc freq data=ift ;
    format age age_group_f.;
 run;
 
+proc means data=&LN..all_pt median max min; 
+   var new_l;
+   title 'Лейкоциты';
+run;
+
 
 proc sort data = &LN..all_pt;
 	by age;
@@ -613,9 +618,27 @@ proc means data=&LN..all_pt median max min;
    FORMAT age age_group_f.;
 run;
 
+proc means data=&LN..all_pt median max min; 
+   var new_ldh;
+   title 'ЛДГ';
+run;
+
+
+proc means data=&LN..all_pt median max min; 
+	by age;
+   var new_ldh;
+   title 'ЛДГ';
+   FORMAT age age_group_f.;
+run;
 
 
 
+
+proc freq data=&LN..all_pt ;
+   tables new_neyrolekname*age / nocum;
+   title 'Нейролейкемия';
+   format age age_group_f.;
+run;
 
 /*/*============= тут переделать для таблички 2х2 =============*/*/
 /**/
