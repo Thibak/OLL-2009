@@ -9,9 +9,33 @@
 /***********************************************************************************************************/
 /***********************************************************************************************************/
 /***********************************************************************************************************/
+/*идентификатор компа*/ *D - sony, Z - ГНЦ;
+*Без предефайна оказывается не работает;
+%let disk = .;
+%let lastname= .;
+%macro what_OC;
+%if &sysscpl = W32_7PRO %then 
+	%do;
+		%let disk = D; *sony;
+	%end;
+%if &sysscpl = X64_7PRO %then 
+	%do;
+		%let disk = Z; *работа;
+	%end;
+%mend;
+
+
+/*определитель ОС*/
+/*data comp;*/
+/*	OC = "&sysscpl";*/
+/*run;*/
+/**/
+/*proc print data = COMP;*/
+/*run;*/
+%what_OC;
 
 %let LN = ALL2009; * имя библиотеки;
-Libname &LN "Z:\AC\OLL-2009\SAS"; * Библиотека данных;
+Libname &LN "&disk.:\AC\OLL-2009\SAS"; * Библиотека данных;
 %let y = cl;
 %let cens = (99, 132, 258, 264);
 
@@ -74,6 +98,10 @@ proc format;
 /*    if date_rel > lastdate then do; time_error = 3; lastdate = date_rel; end;*/
 	value new_group_risk_f 1 = "стандартная" 2 = "высокая";
 	value y_n 0 = "нет" 1 = "да";
+<<<<<<< HEAD
+=======
+	value au_al_f 1 = "ауто" 2 = "алло - родственная" ;
+>>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
 	value reg_f 0 = "Регионы" 1 = "ГНЦ"; 
 run;
 
@@ -91,9 +119,8 @@ data &LN..all_pt;
         ;
 	label 
 		new_group_risk = "группа риска"
-		
 		;
-run;
+		run;
 data &LN..all_et;
     set &LN..all_et;
     rename
@@ -112,7 +139,7 @@ data &LN..all_et;
 		Modifiedbyname	= Modifiedbyname_et
 		Modifiedon = Modifiedon_et
         ;
-run;
+		run;
 data &LN..all_ev;
     set &LN..all_ev;
     rename
@@ -127,7 +154,7 @@ data &LN..all_ev;
 		Modifiedbyname	= Modifiedbyname_ev
 		Modifiedon = Modifiedon_ev
     ;
-run;
+	run;
 /*------ цензурирование, и вычисление производных показателей ----------*/
 
 
@@ -194,7 +221,7 @@ if age = . then age = floor(yrdif(new_birthdate, pr_b,'AGE'));  *если возраста н
     end;
 
 /* ручное цензурирование данных*/
-    if NOT(new_nbrpacient in &cens ) then output;
+    if NOT (pt_id in &cens ) then output;
 run;
 
 /*-----------------------------------блок парсинга событий на этапах----------------------*/
@@ -215,16 +242,18 @@ data &LN..new_et;
     it2 = i2;
 run;
 
-
-/*ТУТ ДОПИСАТЬ ПРОВЕРКУ ТАЙМЛАЙНА*/
-
+*убираем цензурированные записи;
+data &LN..new_et;
+	set &LN..new_et;
+	if it1 ne 0;
+run;
 
 /*прочесываем созданную таблицу, для каждой последней записи загоняем смену на дексаметазон, и номер этапа. Последнюю выводим в датасет*/
 data &LN..new_pt /*(keep=)*/;
     set &LN..new_et;
     by pguid;
-    retain ec   d_ch faza time_error ; *ec -- это количество этапов "свернутых";
-    if first.pguid then do;  ec = 0;  end;
+    retain ec   d_ch faza time_error; *ec -- это количество этапов "свернутых";
+    if first.pguid then do;  ec = 0; d_ch = 0; faza = .; time_error = .;   end;
 /*--------------------------------------------------*/
     if it2 then ec + 1;
 	if lastdate = . then time_error = 0;
@@ -233,7 +262,7 @@ data &LN..new_pt /*(keep=)*/;
     if ph_b > lastdate then do; lastdate = ph_b; time_error = 1; end;
     if ph_e > lastdate and time_error = 0 then do; lastdate = ph_e; end;
 	if ph_e > lastdate then do; lastdate = ph_e; time_error = 1; end;
-
+	
     if new_smena_na_deksamet = 1 then
         do;
             d_ch = 1;
@@ -242,6 +271,11 @@ data &LN..new_pt /*(keep=)*/;
 /*---------------------------------------------------*/
     if last.pguid then
         do;
+<<<<<<< HEAD
+=======
+			if time_error ne . then output &LN..error_timeline;
+
+>>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
             output &LN..new_pt;
             d_ch = 0;
             faza = .;
@@ -310,11 +344,16 @@ proc sort data=&LN..new_pt;
 run;
 
 data &LN..new_ev;
-    merge &LN..new_pt &LN..all_ev_red ;
+    merge &LN..new_pt (in = i1) &LN..all_ev_red(in = i2) ;
     by pguid;
+
+    ie1 = i1;
+    ie2 = i2;
 run;
 /*  rel ремиссия = 1 */
+/*  res резистентность = 2*/
 /*  death Смерть = 3*/
+/*  tkm ТКМ = 4*/
 /*  rem рецедив = 5*/
 
 
@@ -322,17 +361,46 @@ run;
 data &LN..new_pt;
     set &LN..new_ev;
     by pguid;
-    retain i_rem date_rem /**/ i_death date_death /**/ i_rel date_rel /**/ Laspot;
-    if first.pguid then do; i_rel = 0; date_rel = .; /**/ i_death = 0; date_death = .; /**/ i_rem = 0; date_rem = .; Laspot = 0; end;
+    retain i_rem date_rem /**/ i_death date_death i_ind_death /**/i_tkm date_tkm tkm_au_al/**/ i_rel date_rel /**/ i_res date_res /**/ Laspot;
+    if first.pguid then 
+		do; 
+			i_rel = 0; date_rel = .;  
+			i_res = 0; date_res = .; 
+			i_death = 0; date_death = .; i_ind_death = 0; 
+			i_tkm = 0; date_tkm = .; tkm_au_al = 0;
+			i_rem = 0; date_rem = .; 
+			Laspot = 0; 
+		end;
 /*----------------------------------*/
     if new_event = 1 then do; i_rem = 1; date_rem = new_event_date; end;
-    if new_event = 3 then do; i_death = 1; date_death = new_event_date; end;
+	if new_event = 2 then do; i_res = 1; date_res = new_event_date; end;
+    if new_event = 3 then do; i_death = 1; date_death = new_event_date; 
+		if new_event_txt = "В индукции" then i_ind_death = 1; end;
+	if new_event = 4 then do; i_tkm = 1; date_tkm = new_event_date;
+			if new_event_txt = "ауто" then tkm_au_al = 1; 
+			if new_event_txt = "алло - родственная" then tkm_au_al = 2;
+			end;
     if new_event = 5 then do; i_rel = 1; date_rel = new_event_date; end;
 	if new_aspor_otmena = 1 then laspot = 1;
 /*---------------------------------*/
-    if last.pguid then do; output; i_rel = 0; date_rel = .; /**/ i_death = 0; date_death = .; /**/ i_rem = 0; date_rem = .; Laspot = 0; end;
+    if last.pguid then 
+		do; 
+			if ie1 = 1 and ie2 = 1 then  output; 
+			i_rel = 0; date_rel = .; 
+			i_res = 0; date_res = .; 
+			i_death = 0; date_death = .; i_ind_death = 0; 
+			i_tkm = 0; date_tkm = .; tkm_au_al = 0;
+			i_rem = 0; date_rem = .; 
+			Laspot = 0; 
+		end;
 run;
 
+*убираем цензурированные записи;
+data &LN..new_pt;
+	set &LN..new_pt;
+	if ie1 ne 0;
+run;
+	
 
 	
 
@@ -398,7 +466,25 @@ Data &LN..new_pt;
     end;
 run;
 
+/*Смерть в индукции*/
+/*отобрать индук*/
 
+/*------ все проверки проведены, делаем вывод записей содержащих ошибки ------------*/
+
+proc sort data = &LN..error_timeline;
+	by pt_id;
+run;
+
+
+proc print data = &LN..error_timeline split='*' N;
+	var pt_id name time_error;
+	label pt_id = 'Номер пациента*в протоколе'
+          name = 'Имя*в базе пациентов'
+		  time_error = "Ошибки";
+	title "ошибки заполнения таймлайна" ;
+	footnote '*дата последнего визита обнавлена в соответствии с имеющейся информацией о лечении'; 
+	format  it1 it2 it_f. time_error time_error_f. ; 
+run;
 
 /*------ все проверки проведены, делаем вывод записей содержащих ошибки ------------*/
 
@@ -438,6 +524,9 @@ run;
 /*	- бифенотипическийъ*/
 
 footnote " ";
+
+
+
 
 proc means data = &LN..all_pt N;
 	var new_birthdate;
@@ -679,6 +768,10 @@ run;
 proc freq data = &LN..new_pt;
 	table new_normkariotipname;
 run;
+<<<<<<< HEAD
+=======
+
+>>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
 
 %eventan (&LN..new_pt, TLive, i_death, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Выживаемость");
 %eventan (&LN..new_pt, TRF, iRF, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Безрецидивная выживаемость");
@@ -728,7 +821,7 @@ run;
 %eventan (&LN..tmp, Trel, i_rel, 0,F,&y,new_normkariotipname,,"В-клеточный ОЛЛ. Стратификация по кариотипу. Вероятность развития рецидива"); *вероятность развития рецидива;
 
 /*Т-клеточный ОЛЛ*/
-data  &LN..tmp;
+data  &LN..tmp; 
     set &LN..new_pt;
     if (oll_class = 2) then output; *T-клеточный ОЛЛ.;
 run;
@@ -770,8 +863,20 @@ run;
 *%eventan (&LN..new_pt, TRF, iRF, 0,F,&y,age,age_group_f.,"Стратификация по возрасту");
 
 
+<<<<<<< HEAD
 /*регион москва 21C015D6-BF19-E211-B588-10000001B347 or Москва г*/
 
+=======
+/*data AYA;*/
+/*	set &LN..new_pt;*/
+/*	if age < 30 then output;*/
+/*run;*/
+
+/*data adult;*/
+
+
+/*регион москва 21C015D6-BF19-E211-B588-10000001B347 or Москва г*/
+>>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
 data  tmp;
     set &LN..new_pt;
 	reg = 0;
@@ -786,6 +891,7 @@ run;
 %eventan (tmp, TRF, iRF, 0,,&y,reg,reg_f.,"ГНЦ vs регионы. Безрецидивная выживаемость");
 %eventan (tmp, Trel, i_rel, 0,F,&y,reg,reg_f.,"ГНЦ vs регионы. Вероятность развития рецидива"); *вероятность развития рецидива;
 
+<<<<<<< HEAD
 /*определяем у кого не проставлен кариотип*/
 /*data gnz_p;*/
 /*	set tmp;*/
@@ -814,6 +920,8 @@ run;
 /*	var pt_id name ;*/
 /*	   title 'Список пациентов из ГНЦ, у кого НЕ проставлен кариотип';*/
 /*run;*/
+=======
+>>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
 
 
 
