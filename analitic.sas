@@ -98,10 +98,7 @@ proc format;
 /*    if date_rel > lastdate then do; time_error = 3; lastdate = date_rel; end;*/
 	value new_group_risk_f 1 = "стандартная" 2 = "высокая";
 	value y_n 0 = "нет" 1 = "да";
-<<<<<<< HEAD
-=======
 	value au_al_f 1 = "ауто" 2 = "алло - родственная" ;
->>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
 	value reg_f 0 = "Регионы" 1 = "ГНЦ"; 
 run;
 
@@ -120,6 +117,7 @@ data &LN..all_pt;
 	label 
 		new_group_risk = "группа риска"
 		;
+	format new_l 3.2;
 		run;
 data &LN..all_et;
     set &LN..all_et;
@@ -139,6 +137,7 @@ data &LN..all_et;
 		Modifiedbyname	= Modifiedbyname_et
 		Modifiedon = Modifiedon_et
         ;
+
 		run;
 data &LN..all_ev;
     set &LN..all_ev;
@@ -271,11 +270,7 @@ data &LN..new_pt /*(keep=)*/;
 /*---------------------------------------------------*/
     if last.pguid then
         do;
-<<<<<<< HEAD
-=======
-			if time_error ne . then output &LN..error_timeline;
-
->>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
+/*			if time_error ne . then output &LN..error_timeline;*/
             output &LN..new_pt;
             d_ch = 0;
             faza = .;
@@ -502,6 +497,12 @@ proc print data = &LN..error_timeline split='*' N;
 	format  it1 it2 it_f. time_error time_error_f. ; 
 run;
 
+/*data  &LN..new_pt;;*/
+/*	set &LN..new_pt;*/
+/*	if age > 30 then ag = 1;*/
+/*	if age < 30 then ag = 0;*/
+/*run;*/
+
 /*-----------------------------------------------------------------------------------------------------------*/
 /*-----------------------------------------------------------------------------------------------------------*/
 /*--------------------------------------------описательная статистика----------------------------------------*/
@@ -538,10 +539,27 @@ proc means data = &LN..all_pt median max min ;
    title 'Возраст больных (медиана, разброс)';
 run;
 
+proc sort data = &LN..all_pt;
+	by age;
+run;
+
+proc means data = &LN..all_pt median max min ;
+	by age;
+   var age;
+   title 'Возраст больных (медиана, разброс)';
+      format age age_group_f.;
+run;
+
 
 proc freq data=&LN..all_pt ;
    tables new_gendercodename / nocum;
    title 'пол';
+run;
+
+proc freq data=&LN..all_pt ;
+   tables new_gendercodename*age / nocum;
+   title 'пол';
+   format age age_group_f.;
 run;
 
 proc sort data=&LN..all_pt;
@@ -559,6 +577,12 @@ proc freq data=&LN..all_pt ; *информация о количестве (без процентов);
    FORMAT oll_class oc_f.;
 run;
 
+proc freq data=&LN..all_pt ; *информация о количестве (без процентов);
+   tables oll_class*age / nocum NOPERCENT;
+   title 'Иммунофенотип';
+   FORMAT oll_class oc_f. age age_group_f.;
+run;
+
 data ift; *исключаем из анализа имунофенотипа "неизвестно" и бифенотипический;
 	set &LN..all_pt;
 	if oll_class in (1,2) then output;
@@ -570,29 +594,52 @@ proc freq data=ift ;
    FORMAT oll_class oc_f.;
 run;
 
-/*============= тут переделать для таблички 2х2 =============*/
-
-data ift_b; *подробно для B-OLL;
-	set &LN..all_pt;
-	if oll_class = 1 then output;
-run;
-
-proc freq data=ift_b ORDER = DATA;
-   tables new_oll_classname / nocum;
-   title 'Иммунофенотип / подробно для B-OLL';
+proc freq data=ift ;
+   tables oll_class*age / nocum;
+   title 'Иммунофенотип';
    FORMAT oll_class oc_f.;
+   format age age_group_f.;
 run;
 
-data ift_t; *подробно для T-OLL;
-	set &LN..all_pt;
-	if oll_class = 2 then output;
+
+proc sort data = &LN..all_pt;
+	by age;
 run;
 
-proc freq data=ift_t ORDER = DATA ;
-   tables new_oll_classname / nocum;
-   title 'Иммунофенотип / подробно для T-OLL';
-   FORMAT oll_class oc_f.;
+proc means data=&LN..all_pt median max min; 
+	by age;
+   var new_l;
+   title 'Лейкоциты';
+   FORMAT age age_group_f.;
 run;
+
+
+
+
+
+/*/*============= тут переделать для таблички 2х2 =============*/*/
+/**/
+/*data ift_b; *подробно для B-OLL;*/
+/*	set &LN..all_pt;*/
+/*	if oll_class = 1 then output;*/
+/*run;*/
+/**/
+/*proc freq data=ift_b ORDER = DATA;*/
+/*   tables new_oll_classname / nocum;*/
+/*   title 'Иммунофенотип / подробно для B-OLL';*/
+/*   FORMAT oll_class oc_f.;*/
+/*run;*/
+/**/
+/*data ift_t; *подробно для T-OLL;*/
+/*	set &LN..all_pt;*/
+/*	if oll_class = 2 then output;*/
+/*run;*/
+/**/
+/*proc freq data=ift_t ORDER = DATA ;*/
+/*   tables new_oll_classname / nocum;*/
+/*   title 'Иммунофенотип / подробно для T-OLL';*/
+/*   FORMAT oll_class oc_f.;*/
+/*run;*/
 
 /*==============================*/
 
@@ -768,10 +815,7 @@ run;
 proc freq data = &LN..new_pt;
 	table new_normkariotipname;
 run;
-<<<<<<< HEAD
-=======
 
->>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
 
 %eventan (&LN..new_pt, TLive, i_death, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Выживаемость");
 %eventan (&LN..new_pt, TRF, iRF, 0,,&y,new_normkariotipname,,"Стратификация по кариотипу. Безрецидивная выживаемость");
@@ -859,14 +903,17 @@ run;
 %eventan (&LN..new_pt, Trel, i_rel, 0,F,&y,age,age_group_f.,"Стратификация по возрасту. Вероятность развития рецидива"); *вероятность развития рецидива;
 
 
+
+
+
 *%eventan (&LN..new_pt, TLive, i_death, 0,F,&y,age,age_group_f.,"Стратификация по возрасту");
 *%eventan (&LN..new_pt, TRF, iRF, 0,F,&y,age,age_group_f.,"Стратификация по возрасту");
 
 
-<<<<<<< HEAD
+
 /*регион москва 21C015D6-BF19-E211-B588-10000001B347 or Москва г*/
 
-=======
+
 /*data AYA;*/
 /*	set &LN..new_pt;*/
 /*	if age < 30 then output;*/
@@ -876,7 +923,7 @@ run;
 
 
 /*регион москва 21C015D6-BF19-E211-B588-10000001B347 or Москва г*/
->>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
+
 data  tmp;
     set &LN..new_pt;
 	reg = 0;
@@ -891,7 +938,7 @@ run;
 %eventan (tmp, TRF, iRF, 0,,&y,reg,reg_f.,"ГНЦ vs регионы. Безрецидивная выживаемость");
 %eventan (tmp, Trel, i_rel, 0,F,&y,reg,reg_f.,"ГНЦ vs регионы. Вероятность развития рецидива"); *вероятность развития рецидива;
 
-<<<<<<< HEAD
+
 /*определяем у кого не проставлен кариотип*/
 /*data gnz_p;*/
 /*	set tmp;*/
@@ -920,8 +967,7 @@ run;
 /*	var pt_id name ;*/
 /*	   title 'Список пациентов из ГНЦ, у кого НЕ проставлен кариотип';*/
 /*run;*/
-=======
->>>>>>> fd228e8950f415e85f0c246699255a5c42e499ad
+
 
 
 
