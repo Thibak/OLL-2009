@@ -557,7 +557,7 @@ proc freq data=&LN..all_pt ;
 run;
 
 proc freq data=&LN..all_pt ;
-   tables new_gendercodename*age / nocum;
+   tables new_gendercodename*age / nocum chisq relrisk;
    title 'пол';
    format age age_group_f.;
 run;
@@ -578,7 +578,7 @@ proc freq data=&LN..all_pt ; *информация о количестве (без процентов);
 run;
 
 proc freq data=&LN..all_pt ; *информация о количестве (без процентов);
-   tables oll_class*age / nocum NOPERCENT;
+   tables oll_class*age / nocum NOPERCENT chisq relrisk;
    title 'Иммунофенотип';
    FORMAT oll_class oc_f. age age_group_f.;
 run;
@@ -595,7 +595,7 @@ proc freq data=ift ;
 run;
 
 proc freq data=ift ;
-   tables oll_class*age / nocum;
+   tables oll_class*age / nocum chisq relrisk;
    title 'Иммунофенотип';
    FORMAT oll_class oc_f.;
    format age age_group_f.;
@@ -635,7 +635,7 @@ run;
 
 
 proc freq data=&LN..all_pt ;
-   tables new_neyrolekname*age / nocum;
+   tables new_neyrolekname*age / nocum chisq relrisk;
    title 'Нейролейкемия';
    format age age_group_f.;
 run;
@@ -771,7 +771,7 @@ run;
 /*факт смены вычеслен, смена всегда происходит на 7-ой день по протоколу (на предфазе)*/
 
 proc freq data=&LN..new_pt ;
-   tables  d_ch*new_group_risk/ nocum;
+   tables  d_ch*new_group_risk/ nocum chisq relrisk;
    title 'Смена на дексаметазон по группам риска';
    format new_group_risk new_group_risk_f. d_ch y_n.;
 run;
@@ -1042,7 +1042,7 @@ run;
 /*run;*/
 /**/
 /*proc freq data=&LN..fr;*/
-/*    tables new_gendercodename*oll_class /nocum;*/
+/*    tables new_gendercodename*oll_class /nocum chisq relrisk;*/
 /*    title 'Анализ пунктатов КМ на 70 день терапии';*/
 /*run;*/
 /**/
@@ -1119,7 +1119,7 @@ run;
 /*        end;*/
 /*run;*/
 /*proc freq data=&LN..RoI;*/
-/*    tables event*oll_class /nocum;*/
+/*    tables event*oll_class /nocum chisq relrisk;*/
 /*    title 'ПР';*/
 /*run;*/
 /**/
@@ -1133,7 +1133,7 @@ run;
 /*run;*/
 /**/
 /*proc freq data=&LN..tmp;*/
-/*	tables ldg*oll_class /nocum;*/
+/*	tables ldg*oll_class /nocum chisq relrisk;*/
 /*run;*/
 /*	*/
 /*%eventan (&LN..new_pt, TRF, iRF, 0,,&y,Laspot,,"В зависимости от отмены L-аспоргиназы");*/
